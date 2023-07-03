@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <TabelaHash.h>
-//definição do tipo hash
+//definiï¿½ï¿½o do tipo hash
 
 struct hash {
     int qtd, TABLE_SIZE;
@@ -49,6 +49,8 @@ void liberaHash(Hash* ha){
     }
 }
 
+//! metodos de criaÃ§Ã£o do indice do hash
+
 int chaveDivisao(int chave, int TABLE_SIZE) {
 
     return (chave & 0x7FFFFFFF) % TABLE_SIZE;
@@ -58,7 +60,7 @@ int chaveMultiplicacao(int chave, int TABLE_SIZE) {
 
     float A = 0.6180339887; //constante: 0 < A < 1
     float val = chave * A;
-    val = val – (int) val;
+    val = val - (int) val;
 
     return (int) (TABLE_SIZE * val);
 }
@@ -72,14 +74,15 @@ int valorString(char *str) {
     return valor;
 }
 
+//! inserÃ§Ã£o dos dados na tabela hash
 int insereHash_SemColisao(Hash* ha, struct aluno al){
 
-    if (ha == NULL || ha->qtd == ha->TABLE_SIZE)
+    if (ha == NULL || ha->qtd == ha->TABLE_SIZE) //! verifica se ta cheia ou nula
         return 0;
 
     int chave = al.matricula;
     // int chave = valorString(al.nome);
-    int pos = chaveDivisao(chave, ha->TABLE_SIZE);
+    int pos = chaveDivisao(chave, ha->TABLE_SIZE); //! aplica funcao de hash pro divisao
     struct aluno *novo;
     novo = (struct aluno*)malloc(sizeof(struct aluno));
 
