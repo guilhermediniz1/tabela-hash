@@ -149,7 +149,7 @@ int matricular_aluno(Hash *ha, struct aluno al) {
   return 0;
 }
 
-int buscaHash_EnderAberto(Hash *ha, int mat, struct aluno *al) {
+int buscar_por_matricula(Hash *ha, int mat, struct aluno *al) {
   if (ha == NULL)
     return 0;
   int i, pos, newPos;

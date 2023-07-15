@@ -39,7 +39,7 @@ int main() {
       scanf("%d", &matricula);
       struct aluno alunoBuscado;
 
-      int resultado = buscaHash_EnderAberto(ha, matricula, &alunoBuscado);
+      int resultado = buscar_por_matricula(ha, matricula, &alunoBuscado);
       if (resultado != 0) {
         printf("Aluno encontrado:\n");
         printf("Matricula: %d\n", alunoBuscado.matricula);
