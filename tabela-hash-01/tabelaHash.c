@@ -165,3 +165,27 @@ int buscar_por_matricula(Hash *ha, int mat, struct aluno *al) {
   }
   return 0;
 }
+
+int cancelar_matricula(Hash *ha, int matricula) {
+  if (ha == NULL)
+    return 0;
+
+  int i, pos, newPos;
+  pos = chaveDivisao(matricula, ha->TABLE_SIZE);
+
+  for (i = 0; i < ha->TABLE_SIZE; i++) {
+    newPos = sondagemLinear(pos, i, ha->TABLE_SIZE);
+
+    if (ha->itens[newPos] == NULL)
+      return 0;
+
+    if (ha->itens[newPos]->matricula == matricula) {
+      free(ha->itens[newPos]);
+      ha->itens[newPos] = NULL;
+      ha->qtd--;
+      return 1;
+    }
+  }
+
+  return 0;
+}

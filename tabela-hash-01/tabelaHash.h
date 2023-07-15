@@ -12,3 +12,4 @@ int insereHash_SemColisao(Hash *ha, struct aluno al);
 int buscaHash_SemColisao(Hash *ha, int mat, struct aluno *al);
 int matricular_aluno(Hash *ha, struct aluno al);
 int buscar_por_matricula(Hash *ha, int mat, struct aluno *al);
+int cancelar_matricula(Hash *ha, int matricula);

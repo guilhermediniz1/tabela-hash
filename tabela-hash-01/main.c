@@ -31,7 +31,11 @@ int main() {
     case 2:
       printf("\nMatricula do aluno: ");
       scanf("%d", &matricula);
-      // cancelar_matricula(ha, matricula);
+      int res = cancelar_matricula(ha, matricula);
+
+      if (res == 1) {
+        printf("Matricula: %d cancelada com sucesso.", matricula);
+      }
       break;
 
     case 3:
@@ -44,6 +48,9 @@ int main() {
         printf("Aluno encontrado:\n");
         printf("Matricula: %d\n", alunoBuscado.matricula);
         printf("Nome: %s\n", alunoBuscado.nome);
+      } else {
+        printf("Nao foi encontrado nenhum aluno com a matricula '%d'",
+               matricula);
       }
       break;
 
