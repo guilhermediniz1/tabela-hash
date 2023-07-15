@@ -24,7 +24,7 @@ int main() {
       scanf("%d", &(aluno->matricula));
       printf("Nome do aluno: ");
       scanf("%s", aluno->nome);
-      insereHash_EnderAberto(ha, *aluno);
+      matricular_aluno(ha, *aluno);
       printf("Aluno matriculado com sucesso!\n");
       break;
 

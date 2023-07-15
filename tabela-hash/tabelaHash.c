@@ -123,7 +123,7 @@ int duploHash(int H1, int chave, int i, int TABLE_SIZE) {
   return ((H1 + i * H2) & 0x7FFFFFFF) % TABLE_SIZE;
 }
 
-int insereHash_EnderAberto(Hash *ha, struct aluno al) {
+int matricular_aluno(Hash *ha, struct aluno al) {
 
   if (ha == NULL || ha->qtd == ha->TABLE_SIZE)
     return 0;
