@@ -66,14 +66,30 @@ int main() {
       scanf("%s", &nomeBusca);
       struct aluno alunoBuscado;
 
-      int resultado = buscar_por_nome(ha, nomeBusca, &alunoBuscado);
-      if (resultado != 0) {
-        printf("Aluno encontrado:\n");
-        printf("Matricula: %d\n", alunoBuscado.matricula);
-        printf("Nome: %s\n", alunoBuscado.nome);
-      } else {
-        printf("\nNao foi encontrado nenhum aluno com o nome '%s'\n", nomeBusca);
+      char nomeBuscado1[30] = "Maria";
+      char nomeBuscado2[30] = "Joao";
+      char nomeBuscado3[30] = "Mario";
+
+      for(int i=0; i < 10; i++) {
+        buscar_por_nome(ha, nomeBuscado1, &alunoBuscado);  
       }
+
+      for(int i=0; i < 10; i++) {
+        buscar_por_nome(ha, nomeBuscado2, &alunoBuscado);  
+      }
+
+      for(int i=0; i < 10; i++) {
+        buscar_por_nome(ha, nomeBuscado3, &alunoBuscado);  
+      }
+
+      // int resultado = buscar_por_nome(ha, nomeBusca, &alunoBuscado);
+      // if (resultado != 0) {
+      //   printf("Aluno encontrado:\n");
+      //   printf("Matricula: %d\n", alunoBuscado.matricula);
+      //   printf("Nome: %s\n", alunoBuscado.nome);
+      // } else {
+      //   printf("\nNao foi encontrado nenhum aluno com o nome '%s'\n", nomeBusca);
+      // }
       break;
 
     default:
