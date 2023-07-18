@@ -154,7 +154,7 @@ int matricular_aluno(Hash *ha, struct aluno al) {
       FILE *arquivo = fopen("insercoesColisoes.txt", "a");
       if (arquivo != NULL) {
         // Chave - Posicao - Colisao
-        fprintf(arquivo, "| %d | %d | %d | \n", al.matricula, newPos, colisoes);
+        fprintf(arquivo, "%d, %d, %d\n", al.matricula, newPos, colisoes);
         fclose(arquivo);
       }
 
@@ -168,14 +168,26 @@ int matricular_aluno(Hash *ha, struct aluno al) {
 int buscar_por_matricula(Hash *ha, int mat, struct aluno *al) {
   if (ha == NULL)
     return 0;
-  int i, pos, newPos;
+  int i, pos, newPos, colisoes = 0;
   pos = chaveDivisao(mat, ha->TABLE_SIZE);
   for (i = 0; i < ha->TABLE_SIZE; i++) {
     newPos = duploHash(pos, mat, i, ha->TABLE_SIZE);
     if (ha->itens[newPos] == NULL)
       return 0;
+    
+    colisoes++;
+    
     if (ha->itens[newPos]->matricula == mat) {
       *al = *(ha->itens[newPos]);
+
+
+      FILE *arquivo = fopen("buscasColisoes.txt", "a");
+      if (arquivo != NULL) {
+        // Chave - Posicao - Colisao
+        fprintf(arquivo, "%d, %d, %d\n", al->matricula, newPos, colisoes);
+        fclose(arquivo);
+      }
+
       return 1;
     }
   }

@@ -8,7 +8,7 @@ int main() {
   int escolha, matricula;
   char nomeBusca[30];
 
-  Hash *ha = criaHash(1497);
+  Hash *ha = criaHash(61);
 
   do {
     printf("\nMenu:\n");
@@ -31,7 +31,6 @@ int main() {
       // } else {
       //   printf("\nOcorreu um erro ao matricular!\n");
       // }
-
       struct aluno aluno = { 123, "Joao", 8.5, 9.0, 7.5};
       for (int i = 0; i < 10; i++) {
         matricular_aluno(ha, aluno);
@@ -49,10 +48,6 @@ int main() {
         matricular_aluno(ha, aluno3);
         matricular_aluno(ha, aluno2);
       }
-
-      struct aluno aluno4 = { 100, "Douglas", 6.8, 7.0, 8.2};
-      matricular_aluno(ha, aluno4);
-
       break;
 
     case 2:

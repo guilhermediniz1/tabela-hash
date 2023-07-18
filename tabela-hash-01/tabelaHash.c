@@ -160,14 +160,26 @@ int matricular_aluno(Hash *ha, struct aluno al) {
 int buscar_por_matricula(Hash *ha, int mat, struct aluno *al) {
   if (ha == NULL)
     return 0;
-  int i, pos, newPos;
+  
+  int i, pos, newPos, colisoes = 0;
   pos = chaveDivisao(mat, ha->TABLE_SIZE);
+  
   for (i = 0; i < ha->TABLE_SIZE; i++) {
     newPos = sondagemLinear(pos, i, ha->TABLE_SIZE);
+    
     if (ha->itens[newPos] == NULL)
       return 0;
+    
+    colisoes++;
+    
     if (ha->itens[newPos]->matricula == mat) {
       *al = *(ha->itens[newPos]);
+      
+      FILE *arquivo;
+      arquivo = fopen("buscasColisoes.txt", "a");
+      fprintf(arquivo, "%d, %d, %d\n", mat, newPos, colisoes);
+      fclose(arquivo);
+      
       return 1;
     }
   }

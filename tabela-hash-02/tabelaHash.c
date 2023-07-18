@@ -113,26 +113,16 @@ int sondagemLinear(int pos, int i, int TABLE_SIZE) {
   return ((pos + i) & 0x7FFFFFFF) % TABLE_SIZE;
 }
 
-// int sondagemQuadratica(int pos, int i, int TABLE_SIZE) {
-//   pos = pos + 2 * i + 5 * i * i;
-//   return (pos & 0x7FFFFFFF) % TABLE_SIZE;
-// }
+int sondagemQuadratica(int pos, int i, int TABLE_SIZE) {
+  pos = pos + 2 * i + 5 * i * i;
+  return (pos & 0x7FFFFFFF) % TABLE_SIZE;
+}
 
 // Função para sondagem quadrática
-int sondagemQuadratica(int pos, int tentativa, int TABLE_SIZE) {
-  return (pos + tentativa * tentativa) % TABLE_SIZE;
-}
-
-int hashMultiplicacao(char *chave, int TABLE_SIZE) {
-  unsigned int valor = 0;
-  float A = 0.6180339887; // Constante que varia entre 0 e 1
-
-  for (int i = 0; chave[i] != '\0'; i++)
-    valor = valor + chave[i];
-
-  valor = (int)(TABLE_SIZE * fmod((valor * A), 1));
-  return valor;
-}
+// int sondagemQuadratica(int pos, int tentativa, int TABLE_SIZE) {
+//   printf("tentativa: %d\n", tentativa);
+//   return (pos + tentativa * tentativa) % TABLE_SIZE;
+// }
 
 int duploHash(int H1, int chave, int i, int TABLE_SIZE) {
 
@@ -148,7 +138,7 @@ int matricular_aluno(Hash *ha, struct aluno al) {
   char *chave = al.nome;
 
   int i, pos, newPos, colisoes = 0;
-  pos = hashMultiplicacao(chave, ha->TABLE_SIZE);
+  pos = chaveMultiplicacao(valorString(chave), ha->TABLE_SIZE);
 
   for (i = 0; i < ha->TABLE_SIZE; i++) {
     newPos = sondagemQuadratica(pos, i, ha->TABLE_SIZE);
@@ -165,12 +155,13 @@ int matricular_aluno(Hash *ha, struct aluno al) {
       FILE *arquivo = fopen("insercoesColisoes.txt", "a");
       if (arquivo != NULL) {
         // Nome - Posicao - Colisao
-        fprintf(arquivo, "| %s | %d | %d | \n", al.nome, newPos, colisoes);
+        fprintf(arquivo, "%s, %d, %d\n", al.nome, newPos, colisoes);
         fclose(arquivo);
       }
       return 1;
+    } else {
+      colisoes++;
     }
-    colisoes++;
   }
   return 0;
 }
@@ -178,17 +169,31 @@ int matricular_aluno(Hash *ha, struct aluno al) {
 int buscar_por_nome(Hash *ha, char *nome, struct aluno *al) {
   if (ha == NULL)
     return 0;
-  int i, pos, newPos;
+  int i, pos, newPos, colisoes = 0;
   int chave = valorString(nome);
   pos = chaveMultiplicacao(chave, ha->TABLE_SIZE);
   for (i = 0; i < ha->TABLE_SIZE; i++) {
     newPos = sondagemQuadratica(pos, i, ha->TABLE_SIZE);
+
     if (ha->itens[newPos] == NULL)
       return 0;
     if (valorString(ha->itens[newPos]->nome) == valorString(nome)) {
       *al = *(ha->itens[newPos]);
+        FILE *arquivo = fopen("buscasColisoes.txt", "a");
+        if (arquivo != NULL) {
+          // Chave - Posicao - Colisao
+          fprintf(arquivo, "%d, %d, %d \n", al->matricula, newPos, colisoes);
+          fclose(arquivo);
+        }
       return 1;
     }
+    colisoes++;
+  }
+  FILE *arquivo = fopen("buscasColisoes.txt", "a");
+  if (arquivo != NULL) {
+    // Chave - Posicao - Colisao
+    fprintf(arquivo, "%d, %d, %d\n", al->matricula, newPos, colisoes);
+    fclose(arquivo);
   }
   return 0;
 }
