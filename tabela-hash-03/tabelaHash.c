@@ -63,6 +63,13 @@ int chaveMultiplicacao(int chave, int TABLE_SIZE) {
   return (int)(TABLE_SIZE * val);
 }
 
+int chaveDobra(int chave, int TABLE_SIZE) {
+  int num_bits = 10;
+  int parte1 = chave >> num_bits;
+  int parte2 = chave & (TABLE_SIZE - 1);
+  return (parte1 * parte2) % TABLE_SIZE;
+}
+
 int valorString(char *str) {
 
   int i, valor = 7;
@@ -130,10 +137,10 @@ int matricular_aluno(Hash *ha, struct aluno al) {
 
   int chave = al.matricula;
   int i, pos, newPos, colisoes = 0;
-  pos = chaveDivisao(chave, ha->TABLE_SIZE);
+  pos = chaveDobra(chave, ha->TABLE_SIZE);
 
   for (i = 0; i < ha->TABLE_SIZE; i++) {
-    newPos = sondagemLinear(pos, i, ha->TABLE_SIZE);
+    newPos = duploHash(pos, chave, i, ha->TABLE_SIZE);
 
     if (ha->itens[newPos] == NULL) {
       struct aluno *novo;
@@ -150,6 +157,7 @@ int matricular_aluno(Hash *ha, struct aluno al) {
         fprintf(arquivo, "| %d | %d | %d | \n", al.matricula, newPos, colisoes);
         fclose(arquivo);
       }
+
       return 1;
     }
     colisoes++;
@@ -163,7 +171,7 @@ int buscar_por_matricula(Hash *ha, int mat, struct aluno *al) {
   int i, pos, newPos;
   pos = chaveDivisao(mat, ha->TABLE_SIZE);
   for (i = 0; i < ha->TABLE_SIZE; i++) {
-    newPos = sondagemLinear(pos, i, ha->TABLE_SIZE);
+    newPos = duploHash(pos, mat, i, ha->TABLE_SIZE);
     if (ha->itens[newPos] == NULL)
       return 0;
     if (ha->itens[newPos]->matricula == mat) {
@@ -182,7 +190,7 @@ int cancelar_matricula(Hash *ha, int matricula) {
   pos = chaveDivisao(matricula, ha->TABLE_SIZE);
 
   for (i = 0; i < ha->TABLE_SIZE; i++) {
-    newPos = sondagemLinear(pos, i, ha->TABLE_SIZE);
+    newPos = duploHash(pos, matricula, i, ha->TABLE_SIZE);
 
     if (ha->itens[newPos] == NULL)
       return 0;

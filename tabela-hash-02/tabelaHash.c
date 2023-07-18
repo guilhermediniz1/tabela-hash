@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 struct hash {
   int qtd, TABLE_SIZE;
@@ -80,8 +81,8 @@ int insereHash_SemColisao(Hash *ha, struct aluno al) {
 
   int chave = al.matricula;
   // int chave = valorString(al.nome);
-  int pos =
-      chaveDivisao(chave, ha->TABLE_SIZE); //! aplica funcao de hash pro divisao
+  int pos = chaveDivisao(chave, ha->TABLE_SIZE); //! aplica funcao de hash pro divisao
+  int colisoes = 0;
   struct aluno *novo;
   novo = (struct aluno *)malloc(sizeof(struct aluno));
 
@@ -91,6 +92,7 @@ int insereHash_SemColisao(Hash *ha, struct aluno al) {
   *novo = al;
   ha->itens[pos] = novo;
   ha->qtd++;
+  
   return 1;
 }
 
@@ -111,10 +113,25 @@ int sondagemLinear(int pos, int i, int TABLE_SIZE) {
   return ((pos + i) & 0x7FFFFFFF) % TABLE_SIZE;
 }
 
-int sondagemQuadratica(int pos, int i, int TABLE_SIZE) {
+// int sondagemQuadratica(int pos, int i, int TABLE_SIZE) {
+//   pos = pos + 2 * i + 5 * i * i;
+//   return (pos & 0x7FFFFFFF) % TABLE_SIZE;
+// }
 
-  pos = pos + 2 * i + 5 * i * i;
-  return (pos & 0x7FFFFFFF) % TABLE_SIZE;
+// Função para sondagem quadrática
+int sondagemQuadratica(int pos, int tentativa, int TABLE_SIZE) {
+  return (pos + tentativa * tentativa) % TABLE_SIZE;
+}
+
+int hashMultiplicacao(char *chave, int TABLE_SIZE) {
+  unsigned int valor = 0;
+  float A = 0.6180339887; // Constante que varia entre 0 e 1
+
+  for (int i = 0; chave[i] != '\0'; i++)
+    valor = valor + chave[i];
+
+  valor = (int)(TABLE_SIZE * fmod((valor * A), 1));
+  return valor;
 }
 
 int duploHash(int H1, int chave, int i, int TABLE_SIZE) {
@@ -124,16 +141,17 @@ int duploHash(int H1, int chave, int i, int TABLE_SIZE) {
 }
 
 int matricular_aluno(Hash *ha, struct aluno al) {
-
   if (ha == NULL || ha->qtd == ha->TABLE_SIZE)
     return 0;
 
-  int chave = al.matricula;
+  // Utilizando o nome como chave
+  char *chave = al.nome;
+
   int i, pos, newPos, colisoes = 0;
-  pos = chaveDivisao(chave, ha->TABLE_SIZE);
+  pos = hashMultiplicacao(chave, ha->TABLE_SIZE);
 
   for (i = 0; i < ha->TABLE_SIZE; i++) {
-    newPos = sondagemLinear(pos, i, ha->TABLE_SIZE);
+    newPos = sondagemQuadratica(pos, i, ha->TABLE_SIZE);
 
     if (ha->itens[newPos] == NULL) {
       struct aluno *novo;
@@ -146,8 +164,8 @@ int matricular_aluno(Hash *ha, struct aluno al) {
 
       FILE *arquivo = fopen("insercoesColisoes.txt", "a");
       if (arquivo != NULL) {
-        // Chave - Posicao - Colisao
-        fprintf(arquivo, "| %d | %d | %d | \n", al.matricula, newPos, colisoes);
+        // Nome - Posicao - Colisao
+        fprintf(arquivo, "| %s | %d | %d | \n", al.nome, newPos, colisoes);
         fclose(arquivo);
       }
       return 1;
@@ -157,16 +175,17 @@ int matricular_aluno(Hash *ha, struct aluno al) {
   return 0;
 }
 
-int buscar_por_matricula(Hash *ha, int mat, struct aluno *al) {
+int buscar_por_nome(Hash *ha, char *nome, struct aluno *al) {
   if (ha == NULL)
     return 0;
   int i, pos, newPos;
-  pos = chaveDivisao(mat, ha->TABLE_SIZE);
+  int chave = valorString(nome);
+  pos = chaveMultiplicacao(chave, ha->TABLE_SIZE);
   for (i = 0; i < ha->TABLE_SIZE; i++) {
-    newPos = sondagemLinear(pos, i, ha->TABLE_SIZE);
+    newPos = sondagemQuadratica(pos, i, ha->TABLE_SIZE);
     if (ha->itens[newPos] == NULL)
       return 0;
-    if (ha->itens[newPos]->matricula == mat) {
+    if (valorString(ha->itens[newPos]->nome) == valorString(nome)) {
       *al = *(ha->itens[newPos]);
       return 1;
     }
@@ -174,20 +193,21 @@ int buscar_por_matricula(Hash *ha, int mat, struct aluno *al) {
   return 0;
 }
 
-int cancelar_matricula(Hash *ha, int matricula) {
+int cancelar_matricula(Hash *ha, char *nome) {
   if (ha == NULL)
     return 0;
 
   int i, pos, newPos;
-  pos = chaveDivisao(matricula, ha->TABLE_SIZE);
+  int chave = valorString(nome);
+  pos = chaveMultiplicacao(chave, ha->TABLE_SIZE);
 
   for (i = 0; i < ha->TABLE_SIZE; i++) {
-    newPos = sondagemLinear(pos, i, ha->TABLE_SIZE);
+    newPos = sondagemQuadratica(pos, i, ha->TABLE_SIZE);
 
     if (ha->itens[newPos] == NULL)
       return 0;
 
-    if (ha->itens[newPos]->matricula == matricula) {
+    if (valorString(ha->itens[newPos]->nome) == valorString(nome)) {
       free(ha->itens[newPos]);
       ha->itens[newPos] = NULL;
       ha->qtd--;

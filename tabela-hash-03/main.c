@@ -7,7 +7,7 @@ int main() {
   struct aluno *aluno = (struct aluno *)malloc(sizeof(struct aluno));
   int escolha, matricula;
 
-  Hash *ha = criaHash(30);
+  Hash *ha = criaHash(47);
 
   do {
     printf("\nMenu:\n");
@@ -24,9 +24,8 @@ int main() {
       // scanf("%d", &(aluno->matricula));
       // printf("Nome do aluno: ");
       // scanf("%s", aluno->nome);
-      // matricular_aluno(ha, aluno);
+      // matricular_aluno_teste(ha, aluno);
       // printf("Aluno matriculado com sucesso!\n");
-
       struct aluno aluno = { 123, "Joao", 8.5, 9.0, 7.5};
       for (int i = 0; i < 10; i++) {
         matricular_aluno(ha, aluno);
